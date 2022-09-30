@@ -1,0 +1,192 @@
+body {
+    width: 380px;
+    height: 580px;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+body[data-tab='alarm'] header h1:not([for="alarm"]) {
+    display: none;
+}
+
+body[data-tab='stopwatch'] header h1:not([for="stopwatch"]) {
+    display: none;
+}
+
+body[data-tab='timer'] header h1:not([for="timer"]) {
+    display: none;
+}
+
+#alarm[data-tab='view'] #alarm-edit,
+#alarm[data-tab='edit'] #alarm-view {
+    display: none;
+}
+
+#alarm-time {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#alarm-time>input {
+    width: 4rem;
+    height: 4rem;
+    font-size: x-large;
+    text-align: center;
+}
+
+#alarm-options:not([data-repeat='custom']) #alarm-days {
+    display: none;
+}
+
+#alarm-view .single-alarm {
+    display: flex;
+    justify-content: space-between;
+}
+
+.alarm-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.alarm-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.delete-alarm {
+    font-size: xx-large;
+}
+
+.btn {
+    display: flex;
+    margin-top: 3rem;
+    justify-content: space-around;
+}
+
+.btn>input {
+    width: 6rem;
+    height: 3rem;
+    font-size: large;
+}
+
+#stopwatch #stopwatch-time {
+    text-align: center;
+    font-size: xx-large;
+}
+
+[data-stopwatch='start'] .btn input:not([value='start']),
+[data-stopwatch='running'] .btn input:not([value='pause']):not([value='lap']),
+[data-stopwatch='paused'] .btn input:not([value='resume']):not([value='reset']) {
+    display: none;
+}
+
+.setTimer {
+    display: flex;
+    justify-content: center;
+}
+
+
+.setTimer div {
+    margin: 0.5rem;
+}
+
+.setTimer>div>input {
+    width: 5rem;
+    text-align: center;
+    font-size: large;
+    height: 2rem;
+}
+
+.preset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: x-large;
+}
+
+.preset>div {
+    margin: 0.5rem;
+    width: 10rem;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.btn>div>input {
+    width: 6rem;
+    height: 3rem;
+    font-size: large;
+
+}
+
+#timer[data-timer='stopped'] .pause,
+#timer[data-timer='stopped'] .resume,
+#timer[data-timer='stopped'] .stop {
+    display: none;
+}
+
+#timer[data-timer='running'] .start,
+#timer[data-timer='running'] .resume,
+#timer[data-timer='running'] .preset {
+    display: none;
+}
+
+#timer[data-timer='paused'] .start,
+#timer[data-timer='paused'] .pause,
+#timer[data-timer='paused'] .preset {
+    display: none;
+}
