@@ -19,21 +19,22 @@ const notifications = {
         const args = new URLSearchParams();
         args.set('name', name);
         args.set('title', opts.title);
+        console.log(opts.message);
         args.set('message', opts.message);
         args.set('sound', opts.sound);
         args.set('volume', opts.volume);
         args.set('repeats', opts.repeats);
 
         chrome.storage.local.get({
-            'notify-position': 'center' // center, br, tr
+            'notify-position': 'center'
         }, data => {
             args.set('position', data['notify-position']);
 
             const p = {
-                width: 580,
-                height: 250,
+                width: 300,
+                height: 420,
                 type: 'popup',
-                url: 'notification/index.html?' + args.toString()
+                url: 'notification/notify.html?' + args.toString()
             };
             chrome.windows.create(p);
         });
@@ -193,34 +194,38 @@ function onMessage(request, sender, respose) {
     }
 }
 
-function showAlarm(name, title, sound, repeats, volume, message = `Time is over`) {
+function showAlarm(name, title, sound, repeats, volume, message) {
     notifications.clear(name, () => {
         notifications.create(name, {
             title,
-            message: message + '\n\n' + (new Date()).toLocaleString(),
+            message,
             sound,
             volume,
             repeats
         });
 
-        //update scheduled time of this alarm
-        chrome.local.storage.get({ alarms: [] }, ({ alarms }) => {
-            let a = alarms.find(t => t.name === name);
+        // delete alarms scheduled once, update next schedule time in alarm.
 
-            if (a) {
+        chrome.storage.local.get({ alarms: [] }, ({ alarms }) => {
+            alarms = alarms.filter(a => {
 
-                if (name.startsWith('alarm') && a.repeat === 'once') {
-                    deleteAlarm(a);
+                if (a.name === name && a.repeat === 'once') {
+                    deScheduleAlarm(a.name);
+                    return false;
                 }
                 else {
                     updateScheduleAlarm(a, false);
+                    return true;
                 }
-            }
+            });
+
+            chrome.storage.local.set({ alarms }, () => chrome.runtime.sendMessage({ 'action': 'update-entry' }));
         });
     });
 }
 
 function deScheduleAlarm(name) {
+
     if (name.startsWith('alarm')) {
         chrome.alarms.getAll(alarms => {
             alarms.forEach(a => {
@@ -236,12 +241,27 @@ function deScheduleAlarm(name) {
 }
 
 function fireAlarm({ name }) {
-    chrome.storage.local.get({
-        'src-timer': 'sounds/2.mp3',
-        'repeats-timer': 5,
-        'volume-timer': 0.8
-    }, data => {
+    let title, sound;
 
-        showAlarm(name, 'Timer', data['src-timer'], data['repeats-timer'], data['volume-timer']);
+    if (name.startsWith('alarm')) {
+        title = 'Alarm';
+        sound = 'sounds/daydream.mp3';
+    }
+    else {
+        title = 'Timer';
+        sound = 'sounds/fireflies.mp3';
+    }
+
+    let repeat = 5;
+    let message = '';
+
+    chrome.storage.local.get({ alarms: [] }, ({ alarms }) => {
+        alarms.forEach(t => {
+            if (t.name === name) {
+                message = t.label;
+            }
+        });
+
+        showAlarm(name, title, sound, repeat, 0.8, message);
     });
 }

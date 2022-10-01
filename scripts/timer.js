@@ -29,19 +29,19 @@ pauseButton.addEventListener('click', pauseTimer);
 
 switch (localStorage.getItem('timer-state')) {
     case 'paused':
-        timer.dataset.timer = 'paused';
+        document.body.dataset.timer = 'paused';
         setTimer(localStorage.getItem('timer-resume-remaining-time'));
         break;
 
     case 'running':
-        timer.dataset.timer = 'running';
+        document.body.dataset.timer = 'running';
         duration = localStorage.getItem('timer-ring-time') - Date.now();
         tickTimer();
         break;
 
     default:
     case 'stopped':
-        timer.dataset.timer = 'stopped';
+        document.body.dataset.timer = 'stopped';
         break;
 }
 
@@ -49,7 +49,7 @@ function startTimer() {
     duration = (hours.valueAsNumber * 60 * 60 + minutes.valueAsNumber * 60 + seconds.valueAsNumber) * 1000;
     localStorage.setItem('timer-ring-time', Date.now() + duration);
     tickTimer();
-    timer.dataset.timer = 'running';
+    document.body.dataset.timer = 'running';
     localStorage.setItem('timer-state', 'running');
     chrome.runtime.sendMessage({ action: 'set-timer', name: 'timer-alarm', alarmInfo: { when: Date.now() + duration } });
 }
@@ -63,7 +63,7 @@ function tickTimer() {
         id = setTimeout(tickTimer, 1000);
     }
     else {
-        timer.dataset.timer = 'stopped';
+        document.body.dataset.timer = 'stopped';
         localStorage.setItem('timer-state', stopped);
     }
 }
@@ -74,14 +74,14 @@ function stopTimer() {
     minutes.value = '00';
     seconds.value = '00';
     chrome.runtime.sendMessage({ action: 'stop-alarm', name: 'timer-alarm' });
-    timer.dataset.timer = 'stopped';
+    document.body.dataset.timer = 'stopped';
     localStorage.setItem('timer-state', 'stopped');
 }
 
 function pauseTimer() {
     chrome.runtime.sendMessage({ action: 'stop-alarm', name: 'timer-alarm' });
     clearTimeout(id);
-    timer.dataset.timer = 'paused';
+    document.body.dataset.timer = 'paused';
     localStorage.setItem('timer-state', 'paused');
     localStorage.setItem('timer-resume-remaining-time', duration);
 }

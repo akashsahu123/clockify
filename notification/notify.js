@@ -1,16 +1,18 @@
 const args = new URLSearchParams(location.search);
 
-document.querySelector('h1').textContent = args.get('title');
+document.querySelector('h5').textContent = args.get('title');
 document.querySelector('p').textContent = args.get('message');
+let d = new Date();
+let time = `${d.getHours() % 12}`.padStart(2, '00').slice(-2) + ':' + `${(d.getMinutes())}`.padStart(2, '0').slice(-2) + ` ${d.getHours() < 12 ? 'AM' : 'PM'}`;
 
-if (args.get('name').indexOf('alarm') !== -1) {
-  document.querySelector('img').src = 'imgs/alarm.svg';
-}
-else if (args.get('name').indexOf('timer') !== -1) {
-  document.querySelector('img').src = 'imgs/timer.svg';
+document.querySelector('h6').textContent = time;
+document.querySelector('button').onclick = () => window.close();
+
+if (args.get('name').startsWith('alarm')) {
+  document.querySelector('img').src = 'icons/alarm.svg';
 }
 else {
-  document.querySelector('img').src = 'imgs/stopwatch.svg';
+  document.querySelector('img').src = 'icons/timer.svg';
 }
 
 chrome.runtime.sendMessage({
@@ -27,7 +29,6 @@ chrome.runtime.sendMessage({
 }, () => chrome.runtime.lastError);
 
 
-document.getElementById('done').onclick = () => window.close();
 
 const audio = {};
 audio.cache = {};
@@ -35,6 +36,7 @@ audio.cache = {};
 audio.play = (id, src, n = 5, volume = 0.8) => {
   audio.stop(id);
   const e = new Audio();
+
   e.volume = volume;
   e.addEventListener('ended', function () {
     n -= 1;
@@ -46,6 +48,7 @@ audio.play = (id, src, n = 5, volume = 0.8) => {
       delete audio.cache[id];
     }
   }, false);
+
   audio.cache[id] = e;
   e.src = '/' + src;
   e.play();

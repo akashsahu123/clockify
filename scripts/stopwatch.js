@@ -21,32 +21,32 @@ lapButton.addEventListener('click', lapStopwatch);
 
 switch (localStorage.getItem('stopwatch-state')) {
     case 'paused':
-        stopwatch.dataset.stopwatch = 'paused';
+        document.body.dataset.stopwatch = 'paused';
         setStopwatchTimer(localStorage.getItem('stopwatch-last-time'));
         initLaps();
         break;
 
     case 'running':
-        stopwatch.dataset.stopwatch = 'running';
+        document.body.dataset.stopwatch = 'running';
         startStopwatch();
         initLaps();
         break;
 
     default:
     case 'start':
-        stopwatch.dataset.stopwatch = 'start';
+        document.body.dataset.stopwatch = 'start';
         setStopwatchTimer(0);
 }
 
 function startStopwatch() {
-    stopwatch.dataset.stopwatch = 'running';
+    document.body.dataset.stopwatch = 'running';
     localStorage.setItem('stopwatch-state', 'running');
     currentTime = Date.now() - localStorage.getItem('stopwatch-start-time');
     tickStopwatch();
 }
 
 function pauseStopwatch() {
-    stopwatch.dataset.stopwatch = 'paused';
+    document.body.dataset.stopwatch = 'paused';
     localStorage.setItem('stopwatch-state', 'paused');
     clearTimeout(id);
     localStorage.setItem('stopwatch-last-time', currentTime);
@@ -60,14 +60,14 @@ function tickStopwatch() {
 }
 
 function resumeStopwatch() {
-    stopwatch.dataset.stopwatch = 'running';
+    document.body.dataset.stopwatch = 'running';
     localStorage.setItem('stopwatch-state', 'running');
     currentTime = Number(localStorage.getItem('stopwatch-last-time'));
     tickStopwatch();
 }
 
 function resetStopwatch() {
-    stopwatch.dataset.stopwatch = 'start';
+    document.body.dataset.stopwatch = 'start';
     localStorage.setItem('stopwatch-state', 'start');
     clearTimeout(id);
     setStopwatchTimer(0);
@@ -92,6 +92,12 @@ function setStopwatchTimer(d) {
 function insertLap(a, b, c) {
     let fragment = document.createDocumentFragment();
     let container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style['justify-content'] = 'space-between';
+    container.style.padding = '15px';
+    container.classList.add('shadow-sm');
+    container.style.background = 'white';
+    container.style.margin = '5px';
     fragment.appendChild(container);
     let sno = document.createElement('div');
     let lapItem = document.createElement('div');
@@ -104,7 +110,7 @@ function insertLap(a, b, c) {
 }
 
 function msToString(d) {
-    let h = Math.floor(d / (1000 * 60 * 60));
+    let h = ('00' + Math.floor(d / (1000 * 60 * 60))).slice(-2);
     let m = ('00' + Math.floor((d / (1000 * 60)) % 60)).slice(-2);
     let s = ('00' + Math.floor((d / 1000) % 60)).slice(-2);
     let ms = ('00' + Math.floor((d % 1000) / 10)).slice(-2);

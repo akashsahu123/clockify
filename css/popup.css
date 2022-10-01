@@ -1,0 +1,337 @@
+:root {
+    --bodybg: #f8f9fa;
+    --gradient: linear-gradient(to right, #8e2de2, #4a00e0);
+    --footerbg: white;
+    --footer: black;
+    --body: black;
+    --header: black;
+    --headerbg: white;
+    --lightpink: #f65384;
+}
+
+body {
+    width: 380px;
+    height: 580px;
+    background-color: var(--bodybg);
+    color: var(--body);
+}
+
+body[data-tab='alarm'] header :not([for="alarm"]),
+body[data-tab='alarm'] main>:not([id="alarm"]) {
+    display: none !important;
+}
+
+body[data-tab='stopwatch'] header :not([for="stopwatch"]),
+body[data-tab='stopwatch'] main>:not([id="stopwatch"]) {
+    display: none !important;
+}
+
+body[data-tab='timer'] header :not([for="timer"]),
+body[data-tab='timer'] main>:not([id="timer"]) {
+    display: none !important;
+}
+
+[data-alarm='alarm-view'] #alarm>:not([id='alarm-view']),
+[data-alarm='alarm-edit'] #alarm>:not([id='alarm-edit']) {
+    display: none !important;
+}
+
+[data-alarm='alarm-edit'] header input {
+    display: none;
+}
+
+[data-stopwatch='start'] .stopwatch-buttons :not([value='start']),
+[data-stopwatch='running'] .stopwatch-buttons :not([value='pause']):not([value='lap']),
+[data-stopwatch='paused'] .stopwatch-buttons :not([value='resume']):not([value='reset']) {
+    display: none;
+}
+
+[data-timer='stopped'] .timer-btn #timer-pause,
+[data-timer='stopped'] .timer-btn #timer-resume,
+[data-timer='stopped'] .timer-btn #timer-stop {
+    display: none;
+}
+
+[data-timer='running'] .timer-btn #timer-resume,
+[data-timer='running'] .timer-btn #timer-start {
+    display: none;
+}
+
+[data-timer='paused'] .timer-btn #timer-pause,
+[data-timer='paused'] .timer-btn #timer-start {
+    display: none;
+}
+
+[data-tab='alarm'] footer [id='alarm'],
+[data-tab='stopwatch'] footer [id='stopwatch'],
+[data-tab='timer'] footer [id='timer'] {
+    border-bottom: 3px solid var(--lightpink);
+}
+
+header {
+    background-color: var(--headerbg);
+    color: var(--header);
+}
+
+header h1 {
+    font-size: xx-large;
+}
+
+header input {
+    transform: scale(3);
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    padding: 0;
+}
+
+.single-alarm {
+    position: relative;
+    background-color: white;
+}
+
+.delete-alarm {
+    font-size: xx-large;
+    font-weight: bolder;
+    border: none;
+    background: none;
+    color: red;
+}
+
+#alarm-repeat {
+    display: flex;
+    flex-direction: row;
+}
+
+.alarm-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    top: 3px;
+}
+
+.alarm-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+#alarm-no-alarm {
+    font-size: large;
+}
+
+#alarm-edit>* {
+    padding: 8px;
+}
+
+#alarm-time {
+    column-gap: 1em;
+}
+
+#alarm-time * {
+    width: 2.1em;
+    height: 2em;
+    font-size: xx-large;
+    padding-left: 11px;
+}
+
+#stopwatch #stopwatch-time {
+    text-align: center;
+    font-size: xx-large;
+}
+
+#alarm-label {
+    background-color: transparent;
+    border-style: solid;
+    border-color: var(--lightpink);
+    border-width: 0 0 3px 0;
+    outline: none;
+    width: 80%;
+    outline: none;
+}
+
+#alarm-days input {
+    accent-color: var(--lightpink);
+    transform: scale(1.5);
+}
+
+#alarm-repeat input {
+    transform: scale(1.5);
+}
+
+#alarm-btn>* {
+    color: white;
+}
+
+::placeholder {
+    color: #ccc;
+}
+
+#alarm-edit[data-repeat='no-custom'] #alarm-days {
+    display: none;
+}
+
+#stopwatch-time {
+    width: 12rem;
+    margin: 10px auto 10px auto;
+    padding: 10px;
+    background: white;
+}
+
+.stopwatch-buttons>* {
+    border: none;
+    outline: none;
+    background-color: var(--lightpink);
+    padding: 0.6rem;
+    color: white;
+    border-radius: 9999px;
+    margin: 0.5em;
+    width: 10em;
+}
+
+
+#stopwatch-laps-container {
+    height: 19rem;
+}
+
+.setTimer {
+    display: flex;
+    justify-content: center;
+}
+
+
+.setTimer div {
+    margin: 0.5rem;
+}
+
+.setTimer>div>input {
+    width: 5rem;
+    text-align: center;
+    font-size: x-large;
+    border: none;
+    height: 2rem;
+}
+
+.timer-btn>* {
+    border: none;
+    outline: none;
+    background-color: var(--lightpink);
+    padding: 0.6rem;
+    color: white;
+    border-radius: 9999px;
+    margin: 0.5em;
+    width: 10em;
+}
+
+.preset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: large;
+    margin-top: 1.5rem;
+}
+
+.preset>div {
+    /* margin: 0.3rem; */
+    cursor: pointer;
+    font-size: small;
+    background-color: white;
+    width: 10rem;
+    border-bottom: 1px solid rgb(235, 235, 235);
+    text-align: center;
+    padding: 0.5rem;
+
+}
+
+.setTimer>div>div {
+    font-weight: bold;
+}
+
+.setTimer>div>input {
+    height: 3rem;
+}
+
+.btn {
+    display: flex;
+    margin-top: 1.5rem;
+    justify-content: space-evenly;
+}
+
+.btn>input {
+    width: 6rem;
+    height: 3rem;
+
+    /* margin: 3rem auto 0 auto; */
+    font-size: large;
+
+}
+
+
+
+footer {
+    background-color: var(--footerbg);
+    color: var(--footer);
+    border-top: 1px solid var(--footer);
+}
+
+footer * {
+    border: none;
+    outline: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+footer *:focus {
+    border: none;
+    outline: none;
+}

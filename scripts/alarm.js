@@ -1,46 +1,39 @@
-const createAlarmBtn = document.querySelector('#alarm-create');
 const alarm = document.querySelector('#alarm');
 const hours = document.querySelector('#alarm-hour');
 const minutes = document.querySelector('#alarm-minute');
-const edit = document.querySelector('#alarm-edit');
-const cancelBtn = document.querySelector('.btn input[value="cancel"]');
-const saveBtn = document.querySelector('.btn input[value="save"]');
+const alarmEdit = document.querySelector('#alarm-edit');
+const cancelBtn = document.querySelector('#alarm-btn input[value="cancel"]');
+const createBtn = document.querySelector('#alarm-create');
+const saveBtn = document.querySelector('#alarm-btn input[value="save"]');
 const alarmOptions = document.getElementById('alarm-options');
 const alarmDays = document.querySelectorAll('#alarm-days input');
+console.log(alarmDays);
 const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const alarmEntry = document.querySelector("#alarm-view > template");
 const alarmView = document.getElementById('alarm-view');
-createAlarmBtn.addEventListener('click', handleCreateAlarm);
 
 const round = (e, min, max) => {
-    e.target.value = e.target.valueAsNumber > max ? min : (e.target.valueAsNumber < min ? max : e.target.value);
+    e.target.value = ('00' + Math.min(max, Math.max(min, e.target.valueAsNumber))).slice(-2);
 };
 
-hours.addEventListener('change', e => round(e, 0, 23));
-minutes.addEventListener('change', e => round(e, 0, 59));
-cancelBtn.addEventListener('click', () => { alarm.dataset.tab = 'view' });
+hours.addEventListener('input', e => round(e, 0, 23));
+minutes.addEventListener('input', e => round(e, 0, 59));
+cancelBtn.addEventListener('click', () => { document.body.dataset.alarm = 'alarm-view'; setView(); });
 saveBtn.addEventListener('click', saveAlarm);
 
 document.getElementById('alarm-repeat').addEventListener('change', (e) => {
-    alarmOptions.dataset.repeat = e.target.value;
+    alarmEdit.dataset.repeat = (e.target.value === 'custom' ? 'custom' : 'no-custom');
 });
+
+createBtn.addEventListener('click', () => document.body.dataset.alarm = 'alarm-edit');
 
 saveBtn.addEventListener('click', saveAlarm);
 
 chrome.runtime.onMessage.addListener((req) => {
-
     if (req.action === 'update-entry') {
-        setAlarmEntries();
+        setView();
     }
 });
-
-function handleCreateAlarm() {
-    if (alarm.dataset.tab == 'view')
-        alarm.dataset.tab = 'edit';
-    else
-        alarm.dataset.tab = 'edit';
-}
-
 
 function saveAlarm() {
     let time = {
@@ -51,7 +44,7 @@ function saveAlarm() {
     let repeat = document.querySelector('#alarm-repeat input:checked').value;
 
     if (repeat === 'custom') {
-        repeat = [...alarmDays].filter(d => d.checked).map(d => d.valueAsNumber);
+        repeat = [...alarmDays].filter(d => d.checked).map(d => Number(d.value));
 
         if (repeat.length == 0) {
             repeat = 'once';
@@ -63,12 +56,20 @@ function saveAlarm() {
     let active = true;
 
     let a = { name, time, repeat, label, active }
+    document.body.dataset.alarm = 'alarm-view';
+    setView();
     chrome.runtime.sendMessage({ action: 'set-alarm', new: true, 'h': 3, alarm: a });
-    alarm.dataset.tab = 'view';
 }
 
-function setAlarmEntries() {
+function setView() {
+
     chrome.storage.local.get({ alarms: [] }, ({ alarms }) => {
+
+        if (alarms.length === 0) {
+            alarmView.innerHTML = `<div class='p-4 text-center' style='font-size: large;'>You have no scheduled alarm.</div>`;
+            return;
+        }
+
         alarms.sort((a, b) => a.nextScheduleTime - b.nextScheduleTime);
         alarmView.innerHTML = '';
         alarms.forEach(a => {
@@ -103,6 +104,6 @@ function setAlarmEntries() {
     });
 }
 
-setAlarmEntries();
-setInterval(setAlarmEntries, 30 * 1000);
+setView();
+setInterval(setView, 30 * 1000);
 
