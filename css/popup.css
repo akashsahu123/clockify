@@ -1,12 +1,18 @@
+@font-face {
+    font-family: mulish;
+    src: url(../fonts/static/Mulish-Medium.ttf);
+}
+
 :root {
     --bodybg: #f8f9fa;
     --gradient: linear-gradient(to right, #8e2de2, #4a00e0);
     --footerbg: white;
-    --footer: black;
+    --footer: rgb(82, 82, 82);
     --body: black;
-    --header: black;
+    --header: #2f1c6a;
     --headerbg: white;
     --lightpink: #f65384;
+    --purple: rgb(192, 2, 192);
 }
 
 body {
@@ -14,6 +20,7 @@ body {
     height: 580px;
     background-color: var(--bodybg);
     color: var(--body);
+    font-family: mulish, sans-serif;
 }
 
 body[data-tab='alarm'] header :not([for="alarm"]),
@@ -40,37 +47,39 @@ body[data-tab='timer'] main>:not([id="timer"]) {
     display: none;
 }
 
-[data-stopwatch='start'] .stopwatch-buttons :not([value='start']),
-[data-stopwatch='running'] .stopwatch-buttons :not([value='pause']):not([value='lap']),
-[data-stopwatch='paused'] .stopwatch-buttons :not([value='resume']):not([value='reset']) {
+[data-stopwatch='start'] #stopwatch .option-buttons :not([value='start']),
+[data-stopwatch='running'] #stopwatch .option-buttons :not([value='pause']):not([value='lap']),
+[data-stopwatch='paused'] #stopwatch .option-buttons :not([value='resume']):not([value='reset']) {
     display: none;
 }
 
-[data-timer='stopped'] .timer-btn #timer-pause,
-[data-timer='stopped'] .timer-btn #timer-resume,
-[data-timer='stopped'] .timer-btn #timer-stop {
+[data-timer='start'] #timer .option-buttons #timer-pause,
+[data-timer='start'] #timer .option-buttons #timer-resume,
+[data-timer='start'] #timer .option-buttons #timer-stop {
     display: none;
 }
 
-[data-timer='running'] .timer-btn #timer-resume,
-[data-timer='running'] .timer-btn #timer-start {
+[data-timer='running'] #timer .option-buttons #timer-resume,
+[data-timer='running'] #timer .option-buttons #timer-start {
     display: none;
 }
 
-[data-timer='paused'] .timer-btn #timer-pause,
-[data-timer='paused'] .timer-btn #timer-start {
+[data-timer='paused'] .option-buttons #timer-pause,
+[data-timer='paused'] .option-buttons #timer-start {
     display: none;
 }
 
-[data-tab='alarm'] footer [id='alarm'],
-[data-tab='stopwatch'] footer [id='stopwatch'],
-[data-tab='timer'] footer [id='timer'] {
+[data-tab='alarm'] footer [data-value='alarm'],
+[data-tab='stopwatch'] footer [data-value='stopwatch'],
+[data-tab='timer'] footer [data-value='timer'] {
     border-bottom: 3px solid var(--lightpink);
+    color: var(--lightpink);
 }
 
 header {
     background-color: var(--headerbg);
     color: var(--header);
+    border-bottom: 1px solid rgb(223, 223, 223);
 }
 
 header h1 {
@@ -109,7 +118,7 @@ header input {
     display: inline-block;
     width: 44px;
     height: 24px;
-    top: 3px;
+    top: 5px;
 }
 
 .alarm-switch input {
@@ -178,10 +187,44 @@ input:checked+.slider:before {
 }
 
 #alarm-time * {
-    width: 2.1em;
+    width: 2.3em;
     height: 2em;
     font-size: xx-large;
-    padding-left: 11px;
+    padding-left: 16px;
+}
+
+#once,
+#daily {
+    background-color: var(--purple);
+    color: white;
+    font-size: small;
+    font-family: sans-serif;
+    padding: 1px 4px;
+    border-radius: 4px;
+}
+
+#custom {
+    display: flex;
+    justify-content: left;
+    font-size: x-small;
+    padding: 0;
+    color: var(--purple);
+    /* border: 1px solid var(--purple); */
+}
+
+#custom>* {
+    padding: 2px;
+}
+
+#custom .day-active {
+    background-color: var(--purple);
+    color: white;
+}
+
+#alarm .repeat-label[data-repeat="once"]> :not(#once),
+#alarm .repeat-label[data-repeat="daily"]> :not(#daily),
+#alarm .repeat-label[data-repeat="custom"]> :not(#custom) {
+    display: none;
 }
 
 #stopwatch #stopwatch-time {
@@ -227,15 +270,17 @@ input:checked+.slider:before {
     background: white;
 }
 
-.stopwatch-buttons>* {
+.option-buttons>* {
     border: none;
     outline: none;
     background-color: var(--lightpink);
-    padding: 0.6rem;
+    padding: 0.4rem;
     color: white;
     border-radius: 9999px;
     margin: 0.5em;
     width: 10em;
+    font-size: medium;
+    letter-spacing: 1px;
 }
 
 
@@ -259,17 +304,6 @@ input:checked+.slider:before {
     font-size: x-large;
     border: none;
     height: 2rem;
-}
-
-.timer-btn>* {
-    border: none;
-    outline: none;
-    background-color: var(--lightpink);
-    padding: 0.6rem;
-    color: white;
-    border-radius: 9999px;
-    margin: 0.5em;
-    width: 10em;
 }
 
 .preset {
@@ -301,27 +335,10 @@ input:checked+.slider:before {
     height: 3rem;
 }
 
-.btn {
-    display: flex;
-    margin-top: 1.5rem;
-    justify-content: space-evenly;
-}
-
-.btn>input {
-    width: 6rem;
-    height: 3rem;
-
-    /* margin: 3rem auto 0 auto; */
-    font-size: large;
-
-}
-
-
-
 footer {
     background-color: var(--footerbg);
     color: var(--footer);
-    border-top: 1px solid var(--footer);
+    border-top: 1px solid rgb(223, 223, 223);
 }
 
 footer * {

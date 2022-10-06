@@ -10,12 +10,12 @@ let id;
 let duration;
 
 const round = (e, min, max) => {
-    e.target.value = e.target.valueAsNumber > max ? min : (e.target.valueAsNumber < min ? max : e.target.value);
+    e.target.value = ('00' + Math.max(min, Math.min(e.target.valueAsNumber, max))).slice(-2);
 };
 
-hours.addEventListener('change', e => round(e, 0, 99));
-minutes.addEventListener('change', e => round(e, 0, 59));
-seconds.addEventListener('change', e => round(e, 0, 59));
+hours.addEventListener('input', e => round(e, 0, 99));
+minutes.addEventListener('input', e => round(e, 0, 59));
+seconds.addEventListener('input', e => round(e, 0, 59));
 
 document.querySelector('#timer .preset').addEventListener('click', handlePreset);
 
@@ -25,7 +25,7 @@ resumeButton.addEventListener('click', resumeTimer);
 pauseButton.addEventListener('click', pauseTimer);
 
 
-//states : running, paused, stopped
+//states : running, paused, start
 
 switch (localStorage.getItem('timer-state')) {
     case 'paused':
@@ -40,17 +40,20 @@ switch (localStorage.getItem('timer-state')) {
         break;
 
     default:
-    case 'stopped':
-        document.body.dataset.timer = 'stopped';
+    case 'start':
+        document.body.dataset.timer = 'start';
         break;
 }
 
 function startTimer() {
     duration = (hours.valueAsNumber * 60 * 60 + minutes.valueAsNumber * 60 + seconds.valueAsNumber) * 1000;
+
+    if (duration <= 0)
+        return;
+
     localStorage.setItem('timer-ring-time', Date.now() + duration);
     tickTimer();
-    document.body.dataset.timer = 'running';
-    localStorage.setItem('timer-state', 'running');
+    setState('running');
     chrome.runtime.sendMessage({ action: 'set-timer', name: 'timer-alarm', alarmInfo: { when: Date.now() + duration } });
 }
 
@@ -63,8 +66,7 @@ function tickTimer() {
         id = setTimeout(tickTimer, 1000);
     }
     else {
-        document.body.dataset.timer = 'stopped';
-        localStorage.setItem('timer-state', stopped);
+        setState('start');
     }
 }
 
@@ -74,29 +76,25 @@ function stopTimer() {
     minutes.value = '00';
     seconds.value = '00';
     chrome.runtime.sendMessage({ action: 'stop-alarm', name: 'timer-alarm' });
-    document.body.dataset.timer = 'stopped';
-    localStorage.setItem('timer-state', 'stopped');
+    setState('start');
 }
 
 function pauseTimer() {
     chrome.runtime.sendMessage({ action: 'stop-alarm', name: 'timer-alarm' });
     clearTimeout(id);
-    document.body.dataset.timer = 'paused';
-    localStorage.setItem('timer-state', 'paused');
+    setState('paused');
     localStorage.setItem('timer-resume-remaining-time', duration);
 }
 
 function resumeTimer() {
     duration = localStorage.getItem('timer-resume-remaining-time');
-    console.log('duration', duration);
 
     if (duration > 0) {
         setTimer(duration);
         startTimer();
     }
     else {
-        timer.dataset.state = 'stopped';
-        localStorage.setItem('timer-state', 'stopped');
+        setState('start');
     }
 }
 
@@ -121,4 +119,9 @@ function handlePreset(e) {
         let d = e.target.dataset.value * 1000;
         setTimer(d);
     }
+}
+
+function setState(s) {
+    document.body.dataset.timer = s;
+    localStorage.setItem('timer-state', s);
 }

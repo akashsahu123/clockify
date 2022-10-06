@@ -23,13 +23,13 @@ switch (localStorage.getItem('stopwatch-state')) {
     case 'paused':
         document.body.dataset.stopwatch = 'paused';
         setStopwatchTimer(localStorage.getItem('stopwatch-last-time'));
-        initLaps();
+        setLaps();
         break;
 
     case 'running':
         document.body.dataset.stopwatch = 'running';
         startStopwatch();
-        initLaps();
+        setLaps();
         break;
 
     default:
@@ -39,15 +39,13 @@ switch (localStorage.getItem('stopwatch-state')) {
 }
 
 function startStopwatch() {
-    document.body.dataset.stopwatch = 'running';
-    localStorage.setItem('stopwatch-state', 'running');
+    setState('running');
     currentTime = Date.now() - localStorage.getItem('stopwatch-start-time');
     tickStopwatch();
 }
 
 function pauseStopwatch() {
-    document.body.dataset.stopwatch = 'paused';
-    localStorage.setItem('stopwatch-state', 'paused');
+    setState('paused');
     clearTimeout(id);
     localStorage.setItem('stopwatch-last-time', currentTime);
 }
@@ -60,15 +58,13 @@ function tickStopwatch() {
 }
 
 function resumeStopwatch() {
-    document.body.dataset.stopwatch = 'running';
-    localStorage.setItem('stopwatch-state', 'running');
+    setState('running');
     currentTime = Number(localStorage.getItem('stopwatch-last-time'));
     tickStopwatch();
 }
 
 function resetStopwatch() {
-    document.body.dataset.stopwatch = 'start';
-    localStorage.setItem('stopwatch-state', 'start');
+    setState('start');
     clearTimeout(id);
     setStopwatchTimer(0);
     localStorage.removeItem('stopwatch-start-time', 0);
@@ -107,6 +103,8 @@ function insertLap(a, b, c) {
     intervalItem.innerText = msToString(c);
     container.append(sno, lapItem, intervalItem);
     lapsContainer.appendChild(fragment);
+
+    lapsContainer.scrollTo(0, lapsContainer.scrollHeight);
 }
 
 function msToString(d) {
@@ -117,10 +115,15 @@ function msToString(d) {
     return `${h}:${m}:${s}.${ms}`
 }
 
-function initLaps() {
+function setLaps() {
     laps = JSON.parse(localStorage.getItem('stopwatch-laps')) || [];
 
     for (const lap of laps) {
         insertLap(lap[0], lap[1], lap[2]);
     }
+}
+
+function setState(s) {
+    document.body.dataset.stopwatch = s;
+    localStorage.setItem('stopwatch-state', s);
 }

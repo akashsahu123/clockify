@@ -19,7 +19,6 @@ const notifications = {
         const args = new URLSearchParams();
         args.set('name', name);
         args.set('title', opts.title);
-        console.log(opts.message);
         args.set('message', opts.message);
         args.set('sound', opts.sound);
         args.set('volume', opts.volume);
@@ -109,17 +108,22 @@ function onMessage(request, sender, respose) {
         case 'set-alarm':
             let a = request.alarm;
 
+
             chrome.storage.local.get({ alarms: [] }, ({ alarms }) => {
-                alarms.forEach(t => {
-                    if (t.name === a.name) {
-                        t.active = true;
-                    }
-                });
 
                 if (request.new)
                     alarms.push(a);
+                else {
+                    alarms.forEach(t => {
+                        if (t.name === a.name) {
+                            a = t;
+                        }
+                    });
+                }
 
-                updateScheduleAlarm(a, true); //create alarm
+                a.active = true;
+                updateScheduleAlarm(a, true);
+
                 chrome.storage.local.set({ 'alarms': alarms }, () => {
                     chrome.runtime.sendMessage({ 'action': 'update-entry' });
                 });
@@ -145,6 +149,7 @@ function onMessage(request, sender, respose) {
             break;
 
         case 'stop-alarm':
+
             chrome.storage.local.get({ alarms: [] }, ({ alarms }) => {
                 alarms = alarms.filter(t => t.name !== request.name);
 
