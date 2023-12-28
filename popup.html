@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Timer</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/popup.css">
+</head>
+
+<body data-tab="alarm" data-alarm="alarm-view" data-stopwatch="start" data-timer="start" class="d-flex flex-column">
+    <header class="p-2 d-flex justify-content-between px-3 align-items-center">
+        <h1 for="alarm">Alarm</h1>
+        <h1 class="flex-grow-1 text-center" for="stopwatch">Stopwatch</h1>
+        <h1 class="flex-grow-1 text-center" for="timer">Timer</h1>
+        <input for="alarm" id='alarm-create' type="button" value="+">
+    </header>
+
+    <main class="flex-grow-1">
+        <section id="timer" class="d-flex flex-column h-100 justify-content-between">
+            <div class="setTimer">
+                <div class="text-center">
+                    <div>Hour</div>
+                    <input id="timer-hours" class="shadow-sm" type="number" value="00" min="0" max="23">
+                </div>
+                <div class="text-center">
+                    <div>Minutes</div>
+                    <input id="timer-minutes" class="shadow-sm" type="number" value="00" min="0" max="59">
+                </div>
+                <div class="text-center">
+                    <div>Seconds</div>
+                    <input id="timer-seconds" class="shadow-sm" type="number" value="00" min="0" max="59">
+                </div>
+            </div>
+
+
+            <div class="preset">
+                <div class="shadow-sm" data-value="30">30 Seconds</div>
+                <div class="shadow-sm" data-value="60">1 Minute</div>
+                <div class="shadow-sm" data-value="300">5 Minutes</div>
+                <div class="shadow-sm" data-value="600">10 Minutes</div>
+                <div class="shadow-sm" data-value="1800">30 Minutes</div>
+                <div class="shadow-sm" data-value="3600">1 Hour</div>
+            </div>
+
+
+            <div class="option-buttons p-2 d-flex justify-content-around">
+                <input type="button" value="pause" id="timer-pause">
+                <input type="button" value="resume" id="timer-resume">
+                <input type="button" value="start" id="timer-start">
+                <input type="button" value="stop" id="timer-stop">
+            </div>
+        </section>
+
+        <section id="stopwatch" class="d-flex flex-column h-100 justify-content-between">
+            <div class="setStopwatch">
+                <div id="stopwatch-time" class="p-2 shadow-sm">
+                    00.00.00.00
+                </div>
+
+                <div id="stopwatch-laps-container" class="overflow-auto">
+
+                </div>
+            </div>
+            <div class="option-buttons p-2 d-flex justify-content-around">
+                <input type="button" value="pause" id="stopwatch-pause">
+                <input type="button" value="lap" id="stopwatch-lap">
+                <input type="button" value="resume" id="stopwatch-resume">
+                <input type="button" value="start" id="stopwatch-start">
+                <input type="button" value="reset" id="stopwatch-reset">
+            </div>
+        </section>
+
+        <section id="alarm" style="height: 100%;">
+            <!-- tabs: view, edit-->
+            <div id="alarm-view" class="">
+                <template>
+                    <div class="single-alarm my-2 shadow-sm px-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="entry-time" style="font-size: x-large;">
+                                10:00 A.M.
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <label class="alarm-switch mx-3">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                                <input type="button" class="delete-alarm" value="&times;">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-2">
+                            <small class="entry-rem-time text-muted">
+                                Alarm in 7 days
+                            </small>
+                            <div class="repeat-label" data-repeat="once">
+                                <div id="once">
+                                    Once
+                                </div>
+                                <div id="daily">
+                                    Daily
+                                </div>
+                                <div id="custom">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <!--data-repeat : custom, no-custom-->
+
+            <div id="alarm-edit" data-repeat='no-custom'
+                class="d-flex flex-column justify-content-between align-items-center" style="height: 100%;"
+                data-repeat='once'>
+                <div id="alarm-time" class="d-flex justify-content-center m-3">
+                    <input id='alarm-hour' type="number" value="00" min="0" max="23">
+                    <input id='alarm-minute' type="number" value="00" min="0" max="60">
+                </div>
+
+                <div>
+                    <div style="font-weight: bold; font-size: larger;" class="my-3 text-center">
+                        Alarm Repeat
+                    </div>
+
+                    <div id="alarm-repeat" class="d-flex justify-content-center" style="column-gap: 1.2em;">
+                        <label class=""><input name='alarm-repeat' value="once" type="radio" checked>
+                            Once</label>
+                        <label class=""><input name='alarm-repeat' value="daily" type="radio"> Daily</label>
+                        <label class=""><input name='alarm-repeat' value="custom" type="radio"> Custom</label>
+                    </div>
+                </div>
+
+
+                <div id="alarm-days" class="container px-3">
+                    <div class="row">
+                        <label class="col px-3"><input type="checkbox" name="alarm-days" value="0">
+                            &nbsp;Sun</label><br>
+                        <label class="col px-3"><input type="checkbox" name="alarm-days" value="1">
+                            &nbsp;Mon</label><br>
+                        <label class="col px-3"><input type="checkbox" name="alarm-days" value="2">
+                            &nbsp;Tue</label><br>
+                        <label class="col px-3"><input type="checkbox" name="alarm-days" value="3">
+                            &nbsp;Wed</label><br>
+                    </div>
+                    <div class="row">
+                        <label class="col px-3"><input type="checkbox" name="alarm-days" value="4">
+                            &nbsp;Thu</label><br>
+                        <label class="col px-3"><input type="checkbox" name="alarm-days" value="5">
+                            &nbsp;Fri</label><br>
+                        <label class="col px-3"><input type="checkbox" name="alarm-days" value="6">
+                            &nbsp;Sat</label><br>
+                        <div class="col px-3"></div>
+                    </div>
+                </div>
+
+
+                <input id='alarm-label' type='text' placeholder="Alarm Label">
+
+                <div id='alarm-btn' class="d-flex my-4">
+                    <input value='cancel' class="btn rounded-pill mx-3" style="width:8rem; background-color:#f65384;"
+                        type="button">
+                    <input value='save' class="btn rounded-pill mx-3" style="width:8rem; background-color: #f65384;"
+                        type="button">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="d-flex justify-content-around p-2 ">
+        <div data-value="alarm">Alarms</div>
+        <div data-value="stopwatch">Stopwatch</div>
+        <div data-value="timer">Timer</div>
+    </footer>
+</body>
+<script type="module" src="scripts/timer.js"></script>
+<script type="module" src="scripts/stopwatch.js"></script>
+<script type="module" src="scripts/alarm.js"></script>
+<script typpe="module" src="scripts/index.js"></script>
+
+</html>
